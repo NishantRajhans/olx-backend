@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 // Define the Courses schema
-const coursesSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   productDescription: { type: String },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
@@ -15,4 +15,4 @@ const coursesSchema = new mongoose.Schema({
 })
 
 // Export the Courses model
-module.exports = mongoose.model("Course", coursesSchema)
+module.exports = mongoose.model("product",productSchema)

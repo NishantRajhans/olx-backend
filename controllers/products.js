@@ -1,22 +1,14 @@
 const Product = require("../models/product")
 const User = require("../models/User")
-const mongoose = require("mongoose");
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
-// Function to create a new course
 exports.createProduct = async (req, res) => {
   try {
-    // Get user ID from request object
     const userId = req.user.id
-
-    // Get all required fields from request body
     let {
       productDescription,
       price,
     } = req.body
-    // Get thumbnail image from request files
-    //const thumbnail = req.files.thumbnailImag;
-
-    // Check if any of the required fields are missing
+    const thumbnail = req.files.thumbnailImag;
     if (
       !productDescription||
       !price
@@ -26,32 +18,27 @@ exports.createProduct = async (req, res) => {
         message: "All Fields are Mandatory",
       })
     }
-    // Check if the user is an instructor
-    const instructorDetails = await User.findById(userId)
+    const sellerDetails = await User.findById(userId)
 
-    if (!instructorDetails) {
+    if (!sellerDetails) {
       return res.status(404).json({
         success: false,
-        message: "Instructor Details Not Found",
+        message: "Seller Details Not Found",
       })
     }
-    // Upload the Thumbnail to Cloudinary
-    /*const thumbnailImage = await uploadImageToCloudinary(
+    const thumbnailImage = await uploadImageToCloudinary(
       thumbnail,
       process.env.FOLDER_NAME
     )
-    console.log(thumbnailImage)*/
-    // Create a new course with the given details
+    console.log(thumbnailImage)
     const newProduct = await Product.create({
         productDescription,
         price,
-        seller:instructorDetails
+        seller:sellerDetails
     })
-
-    // Add the new course to the User Schema of the Instructor
     await User.findByIdAndUpdate(
       {
-        _id: instructorDetails._id,
+        _id:sellerDetails._id,
       },
       {
         $push: {
@@ -60,23 +47,20 @@ exports.createProduct = async (req, res) => {
       },
       { new: true }
     )
-    // Return the new course and a success message
     res.status(200).json({
       success: true,
       data: newProduct,
       message: "Product Created Successfully",
     })
   } catch (error) {
-    // Handle any errors that occur during the creation of the course
     console.error(error)
     res.status(500).json({
       success: false,
-      message: "Failed to create course",
+      message: "Failed to create product",
       error: error.message,
     })
   }
 }
-// Get Course List
 exports.getAllProduct = async (req, res) => {
   try {
     const allProducts = await Product.find(
@@ -96,7 +80,7 @@ exports.getAllProduct = async (req, res) => {
     console.log(error)
     return res.status(404).json({
       success: false,
-      message: `Can't Fetch Course Data`,
+      message: `Can't Fetch Product Data`,
       error: error.message,
     })
   }
@@ -114,27 +98,22 @@ exports.getFullProductDetails=async(req, res) => {
         console.log(error)
         return res.status(404).json({
           success: false,
-          message: `Can't Fetch Course Data`,
+          message: `Can't Fetch product Data`,
           error: error.message,
         })
       }
 }
-// Delete the Course
 exports.deleteProduct= async (req, res) => {
   try {
     const { productId } = req.body
-
-    // Find the course
     const product = await Product.findById({_id:productId})
     if (!product) {
-      return res.status(404).json({ message: "Course not found" })
+      return res.status(404).json({ message: "Product not found" })
     }
-    // Delete the course
     await Course.findByIdAndDelete(productId)
-
     return res.status(200).json({
       success: true,
-      message: "Course deleted successfully",
+      message: "Product deleted successfully",
     })
   } catch (error) {
     console.error(error)
