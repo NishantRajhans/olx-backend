@@ -10,6 +10,8 @@ const {
 const { auth} = require("../middleware/auth")
 router.post("/createProduct",auth,createProduct)
 router.get("/getAllProduct", auth,getAllProduct)
-router.get("/getFullProductDetais", auth, getFullProductDetails)
+// Get Details for a Specific Courses
+router.get("/getFullProductDetais/:id", auth, getFullProductDetails)
+// Delete a Course
 router.delete("/deleteProduct", deleteProduct)
 module.exports = router
