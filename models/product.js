@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const coursesSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   productDescription: { type: String },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
@@ -14,4 +14,4 @@ const coursesSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now },
 })
-module.exports = mongoose.model("Course", coursesSchema)
+module.exports = mongoose.model("product", productSchema)

@@ -8,10 +8,6 @@ exports.createProduct = async (req, res) => {
       productDescription,
       price,
     } = req.body
-    // Get thumbnail image from request files
-    //const thumbnail = req.files.thumbnailImag;
-
-    // Check if any of the required fields are missing
     if (
       !productDescription||
       !price
@@ -21,13 +17,12 @@ exports.createProduct = async (req, res) => {
         message: "All Fields are Mandatory",
       })
     }
-    // Check if the user is an instructor
-    const instructorDetails = await User.findById(userId)
+    const sellerDetails = await User.findById(userId)
 
     if (!sellerDetails) {
       return res.status(404).json({
         success: false,
-        message: "Instructor Details Not Found",
+        message: "Seller Details Not Found",
       })
     }
     const thumbnailImage = await uploadImageToCloudinary(
@@ -38,7 +33,7 @@ exports.createProduct = async (req, res) => {
     const newProduct = await Product.create({
         productDescription,
         price,
-        seller:instructorDetails
+        seller:sellerDetails
     })
     await User.findByIdAndUpdate(
       {
@@ -101,7 +96,7 @@ exports.getFullProductDetails=async(req, res) => {
         console.log(error)
         return res.status(404).json({
           success: false,
-          message: `Can't Fetch Course Data`,
+          message: `Can't Fetch Product Data`,
           error: error.message,
         })
       }
@@ -113,7 +108,7 @@ exports.deleteProduct= async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" })
     }
-    await Course.findByIdAndDelete(productId)
+    await Product.findByIdAndDelete(productId)
     return res.status(200).json({
       success: true,
       message: "Product deleted successfully",
