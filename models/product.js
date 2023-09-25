@@ -1,6 +1,4 @@
 const mongoose = require("mongoose")
-
-// Define the Courses schema
 const coursesSchema = new mongoose.Schema({
   productDescription: { type: String },
   seller: {
@@ -8,11 +6,12 @@ const coursesSchema = new mongoose.Schema({
     required: true,
     ref: "user",
   },
+  thumbnail:{
+    type:String,
+ },
   price: {
     type: Number,
   },
   createdAt: { type: Date, default: Date.now },
 })
-
-// Export the Courses model
 module.exports = mongoose.model("Course", coursesSchema)
